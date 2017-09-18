@@ -1,6 +1,6 @@
 <?php
 // Text
-$_['text_title'] = 'Platron (Visa, Mastercard)';
+$_['text_title'] = 'Paybox (Visa, Mastercard)';
 
 // Msg
 $_['msg_description']    = 'Оплата по счету №%s';
