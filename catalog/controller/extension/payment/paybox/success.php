@@ -1,5 +1,7 @@
 <?php
-class ControllerCheckoutPayboxFail extends Controller {
+class ControllerExtensionPaymentPayboxSuccess extends Controller {
+    public $data = array();
+
 	public function index() {
 
 		if ( isset($this->session->data['order_id']) && ( ! empty($this->session->data['order_id']))  ) {
@@ -22,13 +24,7 @@ class ControllerCheckoutPayboxFail extends Controller {
 			unset($this->session->data['vouchers']);
 		}
 
-		$this->language->load('checkout/paybox_fail');
-
-		if (! empty($this->session->data['last_order_id']) ) {
-			$this->document->setTitle(sprintf($this->language->get('heading_title_customer'), $this->session->data['last_order_id']));
-		} else {
-    		$this->document->setTitle($this->language->get('heading_title'));
-		}
+		$this->language->load('extension/payment/paybox');
 
 		$data['breadcrumbs'] = array();
 
@@ -45,14 +41,14 @@ class ControllerCheckoutPayboxFail extends Controller {
       	);
 
 		$data['breadcrumbs'][] = array(
-			'href'      => $this->url->link('checkout/checkout', '', 'SSL'),
+			'href'      => $this->url->link('checkout/checkout', '', true),
 			'text'      => $this->language->get('text_checkout'),
 			'separator' => $this->language->get('text_separator')
 		);
 
       	$data['breadcrumbs'][] = array(
-        	'href'      => $this->url->link('checkout/paybox_fail'),
-        	'text'      => $this->language->get('text_fail'),
+        	'href'      => $this->url->link('checkout/success'),
+        	'text'      => $this->language->get('text_success'),
         	'separator' => $this->language->get('text_separator')
       	);
 
@@ -63,7 +59,7 @@ class ControllerCheckoutPayboxFail extends Controller {
 		}
 
 		if ($this->customer->isLogged()) {
-			$data['text_message'] = sprintf($this->language->get('text_customer'), $this->url->link('account/order/info&order_id=' . $this->session->data['last_order_id'], '', 'SSL'), $this->session->data['last_order_id'], $this->url->link('account/account', '', 'SSL'), $this->url->link('account/order', '', 'SSL'), $this->url->link('account/download', '', 'SSL'), $this->url->link('information/contact'));
+			$data['text_message'] = sprintf($this->language->get('text_customer'), $this->url->link('account/order/info&order_id=' . $this->session->data['last_order_id'], '', true), $this->session->data['last_order_id'], $this->url->link('account/account', '', true), $this->url->link('account/order', '', true), $this->url->link('account/download', '', true), $this->url->link('information/contact'));
 		} else {
     		$data['text_message'] = sprintf($this->language->get('text_guest'), $this->session->data['last_order_id'], $this->url->link('information/contact'));
 		}
@@ -72,22 +68,19 @@ class ControllerCheckoutPayboxFail extends Controller {
 
     	$data['continue'] = $this->url->link('common/home');
 
-		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/common/paybox_fail.tpl')) {
-			$this->template = $this->config->get('config_template') . '/template/common/paybox_fail.tpl';
+		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . 'extension/payment/paybox/success.tpl')) {
+			$this->template = $this->config->get('config_template') . 'extension/payment/paybox/success.tpl';
 		} else {
-			$this->template = 'default/template/common/paybox_fail.tpl';
+			$this->template = 'extension/payment/paybox/success.tpl';
 		}
 
-		$this->children = array(
-			'common/column_left',
-			'common/column_right',
-			'common/content_top',
-			'common/content_bottom',
-			'common/footer',
-			'common/header'
-		);
-
-		$this->response->setOutput($this->render());
+        $data['header'] = $this->load->controller('common/header');
+        $data['column_left'] = $this->load->controller('common/column_left');
+        $data['column_right'] = $this->load->controller('common/column_right');
+        $data['content_top'] = $this->load->controller('common/content_top');
+        $data['content_bottom'] = $this->load->controller('common/content_bottom');
+        $data['footer'] = $this->load->controller('common/footer');
+        $this->response->setOutput($this->load->view($this->template, $data));
   	}
 }
 ?>
