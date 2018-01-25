@@ -1,16 +1,17 @@
 <?php
 class ControllerExtensionPaymentPaybox extends Controller {
-    private $error = array();
 
     public function index() {
         $this->load->language('extension/payment/paybox');
+
         $this->document->setTitle = $this->language->get('heading_title');
+
         $this->load->model('setting/setting');
+
         if (($this->request->server['REQUEST_METHOD'] == 'POST') && ($this->validate())) {
-            $this->load->model('setting/setting');
             $this->model_setting_setting->editSetting('paybox', $this->request->post);
             $this->session->data['success'] = $this->language->get('text_success');
-            $this->response->redirect($this->url->link('extension/extension', 'token=' . $this->session->data['token'] . '&type=payment', true));
+            $this->response->redirect($this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=payment', true));
         }
 
         $data['heading_title'] = $this->language->get('heading_title');
@@ -81,25 +82,25 @@ class ControllerExtensionPaymentPaybox extends Controller {
 
         $data['breadcrumbs'][] = array(
             'text'      => $this->language->get('text_home'),
-            'href'      => $this->url->link('common/home', 'token=' . $this->session->data['token'], 'SSL'),
+            'href'      => $this->url->link('common/home', 'user_token=' . $this->session->data['user_token'], 'SSL'),
             'separator' => false
         );
 
         $data['breadcrumbs'][] = array(
             'text'      => $this->language->get('text_payment'),
-            'href'      => $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL'),
+            'href'      => $this->url->link('extension/payment', 'user_token=' . $this->session->data['user_token'], 'SSL'),
             'separator' => ' :: '
         );
 
         $data['breadcrumbs'][] = array(
             'text'      => $this->language->get('heading_title'),
-            'href'      => $this->url->link('extension/payment/paybox', 'token=' . $this->session->data['token'], 'SSL'),
+            'href'      => $this->url->link('extension/payment/paybox', 'user_token=' . $this->session->data['user_token'], 'SSL'),
             'separator' => ' :: '
         );
 
-        $data['action'] = $this->url->link('extension/payment/paybox', 'token=' . $this->session->data['token'], 'SSL');
+        $data['action'] = $this->url->link('extension/payment/paybox', 'user_token=' . $this->session->data['user_token'], 'SSL');
 
-        $data['cancel'] = $this->url->link('extension/payment', 'token=' . $this->session->data['token'], 'SSL');
+        $data['cancel'] = $this->url->link('extension/payment', 'user_token=' . $this->session->data['user_token'], 'SSL');
 
         //
         if (isset($this->request->post['paybox_payment_name'])) {
@@ -167,7 +168,7 @@ class ControllerExtensionPaymentPaybox extends Controller {
             $data['paybox_sort_order'] = $this->config->get('paybox_sort_order');
         }
 
-        $this->template = 'extension/payment/paybox.tpl';
+        $this->template = 'extension/payment/paybox';
         $this->children = array(
             'common/header',
             'common/footer'
@@ -176,7 +177,7 @@ class ControllerExtensionPaymentPaybox extends Controller {
         $data['header'] = $this->load->controller('common/header');
         $data['column_left'] = $this->load->controller('common/column_left');
         $data['footer'] = $this->load->controller('common/footer');
-        $this->response->setOutput($this->load->view('extension/payment/paybox.tpl', $data));
+        $this->response->setOutput($this->load->view('extension/payment/paybox', $data));
     }
 
     private function validate() {

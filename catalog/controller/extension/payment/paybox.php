@@ -28,7 +28,7 @@ class ControllerExtensionPaymentPaybox extends Controller {
 
         $msg_description = $this->language->get('msg_description');
 
-        $this->load->model('extension/payment/paybox');
+        $this->load->model('payment/paybox');
 
         $strCurrency = $order_info['currency_code'];
         if($strCurrency == "RUR") {
@@ -37,7 +37,7 @@ class ControllerExtensionPaymentPaybox extends Controller {
 
         $arrReq = array(
             'pg_amount'         => (int)$order_products['total'],
-            'pg_check_url'      => HTTPS_SERVER . 'index.php?route=extension/payment/paybox/check',
+            'pg_check_url'      => HTTPS_SERVER . 'index.php?route=payment/paybox/check',
             'pg_description'    => $strOrderDescription,
             'pg_encoding'       => 'UTF-8',
             'pg_currency'       => $strCurrency,
@@ -45,11 +45,11 @@ class ControllerExtensionPaymentPaybox extends Controller {
             'pg_lifetime'       => !empty($lifetime) ? $lifetime * 3600 : 86400,
             'pg_merchant_id'    => $merchant_id,
             'pg_order_id'       => $order_info['order_id'],
-            'pg_result_url'     => HTTPS_SERVER . 'index.php?route=extension/payment/paybox/callback',
+            'pg_result_url'     => HTTPS_SERVER . 'index.php?route=payment/paybox/callback',
             'pg_request_method' => 'GET',
             'pg_salt'           => rand(21, 43433),
-            'pg_success_url'    => HTTPS_SERVER . 'index.php?route=checkout/success',
-            'pg_failure_url'    => HTTPS_SERVER . 'index.php?route=checkout/failure',
+            'pg_success_url'    => HTTPS_SERVER . 'index.php?route=checkout/paybox/success',
+            'pg_failure_url'    => HTTPS_SERVER . 'index.php?route=checkout/paybox/fail',
             'pg_user_ip'        => $_SERVER['REMOTE_ADDR'],
             'pg_user_phone'     => $order_info['telephone'],
             'pg_user_contact_email' => $order_info['email']
@@ -59,15 +59,15 @@ class ControllerExtensionPaymentPaybox extends Controller {
             $arrReq['pg_testing_mode'] = 1;
         }
 
-        $arrReq['pg_sig'] = $this->model_extension_payment_paybox->make('payment.php', $arrReq, $secret_word);
+        $arrReq['pg_sig'] = $this->model_payment_paybox->make('payment.php', $arrReq, $secret_word);
         $query = http_build_query($arrReq);
 
         $data['action'] = 'https://paybox.kz/payment.php?' . $query;
 
-        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/payment/paybox.tpl')) {
-            return $this->load->view($this->config->get('config_template') . '/payment/paybox.tpl', $data);
+        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/payment/paybox')) {
+            return $this->load->view($this->config->get('config_template') . '/payment/paybox', $data);
         } else {
-            return $this->load->view('extension/payment/paybox.tpl', $data);
+            return $this->load->view('payment/paybox', $data);
         }
     }
 
@@ -75,7 +75,7 @@ class ControllerExtensionPaymentPaybox extends Controller {
 
         $this->language->load('payment/paybox');
         $this->load->model('checkout/order');
-        $this->load->model('extension/payment/paybox');
+        $this->load->model('payment/paybox');
 
         $arrResponse = array();
 
@@ -89,7 +89,7 @@ class ControllerExtensionPaymentPaybox extends Controller {
 
         $secret_word = $this->config->get('paybox_secret_word');
 
-        if(!$this->model_extension_payment_paybox->checkSig($pg_sig, 'index.php', $data, $secret_word)) {
+        if(!$this->model_payment_paybox->checkSig($pg_sig, 'index.php', $data, $secret_word)) {
             die('Incorrect signature!');
         }
 
@@ -107,7 +107,7 @@ class ControllerExtensionPaymentPaybox extends Controller {
             $arrResponse['pg_description'] = $this->language->get('err_order_not_found');
         }
 
-        $arrResponse['pg_sig'] = $this->model_extension_payment_paybox->make('index.php', $arrResponse, $secret_word);
+        $arrResponse['pg_sig'] = $this->model_payment_paybox->make('index.php', $arrResponse, $secret_word);
 
         header('Content-type: text/xml');
         echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n";
@@ -122,7 +122,7 @@ class ControllerExtensionPaymentPaybox extends Controller {
 
     public function callback() {
         $this->language->load('payment/paybox');
-        $this->load->model('extension/payment/paybox');
+        $this->load->model('payment/paybox');
         $this->load->model('checkout/order');
 
         $arrResponse = array();
@@ -137,7 +137,7 @@ class ControllerExtensionPaymentPaybox extends Controller {
 
         $secret_word = $this->config->get('paybox_secret_word');
 
-        if(!$this->model_extension_payment_paybox->checkSig($pg_sig, 'index.php', $data, $secret_word)) {
+        if(!$this->model_payment_paybox->checkSig($pg_sig, 'index.php', $data, $secret_word)) {
             die('Incorrect signature!');
         }
 
@@ -159,7 +159,7 @@ class ControllerExtensionPaymentPaybox extends Controller {
             $arrResponse['pg_error_description'] = $this->language->get('err_order_not_found');
         }
 
-        $arrResponse['pg_sig'] = $this->model_extension_payment_paybox->make('index.php', $arrResponse, $secret_word);
+        $arrResponse['pg_sig'] = $this->model_payment_paybox->make('index.php', $arrResponse, $secret_word);
 
         header('Content-type: text/xml');
         echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n";
@@ -171,11 +171,27 @@ class ControllerExtensionPaymentPaybox extends Controller {
         echo "</response>\r\n";
 
         if($arrResponse['pg_status'] == 'ok') {
-            if($order_info['order_status_id'] != $this->config->get('paybox_order_status_id')) {
-                $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('paybox_order_status_id'));
+            if($order_info['order_status_id'] == 0) {
+                $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('paybox_order_status_id'), 'Paybox');
+                return;
             }
+            if($order_info['order_status_id'] != $this->config->get('paybox_order_status_id')) {
+                $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('paybox_order_status_id'), 'Paybox', TRUE);
+            }
+
         }
 
+    }
+
+
+    private function getVersion() {
+        $version = explode('.', VERSION);
+        return array(
+            'alpha' => $version[0],
+            'beta' => $version[1],
+            'rc' => $version[2],
+            'public' => $version[3]
+        );
     }
 }
 ?>
