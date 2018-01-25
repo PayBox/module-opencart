@@ -1,107 +1,148 @@
-<?php echo $header; ?>
+<?=$header?><?=$column_left?>
 <div id="content">
-  <div class="breadcrumb">
-    <?php foreach ($breadcrumbs as $breadcrumb) { ?>
-    <?php echo $breadcrumb['separator']; ?><a href="<?php echo $breadcrumb['href']; ?>"><?php echo $breadcrumb['text']; ?></a>
-    <?php } ?>
-  </div>
-<?php if ($error_warning) { ?>
-<div class="warning"><?php echo $error_warning; ?></div>
-<?php } ?>
-<div class="box">
-  <div class="left"></div>
-  <div class="right"></div>
-  <div class="heading">
-          <h1><img src="view/image/payment.png" alt="" /> <?php echo $heading_title; ?></h1>
-    <div class="buttons"><a onclick="$('#form').submit();" class="button"><span><?php echo $button_save; ?></span></a><a onclick="location='<?php echo $cancel; ?>';" class="button"><span><?php echo $button_cancel; ?></span></a></div>
-  </div>
-  <div class="content">
-    <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form">
-      <table class="form">
-          <tr>
-              <td width="25%"><span class="required">*</span> <?php echo $entry_payment_name; ?></td>
-              <td><input type="text" name="paybox_payment_name" value="<?php echo $paybox_payment_name; ?>" />
-                  <br />
-                  <?php if ($error_payment_name) { ?>
-                  <span class="error"><?php echo $error_payment_name; ?></span>
-                  <?php } ?></td>
-          </tr>
-      	<tr>
-        <td width="25%"><span class="required">*</span> <?php echo $entry_merchant_id; ?></td>
-        <td><input type="text" name="paybox_merchant_id" value="<?php echo $paybox_merchant_id; ?>" />
-          <br />
-          <?php if ($error_merchant_id) { ?>
-          <span class="error"><?php echo $error_merchant_id; ?></span>
-          <?php } ?></td>
-      	</tr>
-      	<tr>
-        <td><span class="required">*</span> <?php echo $entry_secret_word; ?></td>
-        <td><input type="text" name="paybox_secret_word" value="<?php echo $paybox_secret_word; ?>" />
-          <br />
-          <?php if ($error_secret_word) { ?>
-          <span class="error"><?php echo $error_secret_word; ?></span>
-          <?php } ?></td>
-      	</tr>
-      	<tr>
-       		<td><span class="required">*</span> Result URL:</td>
-        	<td><?php echo $copy_result_url; ?></td>
-      	</tr>
-      	<tr>
-        	<td><span class="required">*</span> Success URL:</td>
-        	<td><?php echo $copy_success_url; ?></td>
-      	</tr>
-      	<tr>
-        	<td><span class="required">*</span> Fail URL:</td>
-        	<td><?php echo $copy_fail_url; ?></td>
-      	</tr>
-          <tr>
-              <td><?php echo $entry_test; ?></td>
-              <td>
-                  <select name="paybox_test">
-                      <?php if($paybox_test == 1) { ?>
-                      <option value="1" selected="selected"><?php echo $text_enabled; ?></option>
-                      <option value="0"><?php echo $text_disabled; ?></option>
-                      <?php } else { ?>
-                      <option value="1"><?php echo $text_enabled; ?></option>
-                      <option value="0" selected="selected"><?php echo $text_disabled; ?></option>
-                      <?php } ?>
-                  </select>
-              </td>
-          </tr>
-          <tr>
-              <td width="25%"><?php echo $entry_lifetime; ?></td>
-              <td><input type="text" name="paybox_lifetime" value="<?php echo $paybox_lifetime; ?>" /></td>
-          </tr>
-      	<tr>
-        <td><?php echo $entry_order_status; ?></td>
-        <td><select name="paybox_order_status_id">
-            <?php foreach ($order_statuses as $order_status) { ?>
-            <?php if ($order_status['order_status_id'] == $paybox_order_status_id) { ?>
-            <option value="<?php echo $order_status['order_status_id']; ?>" selected="selected"><?php echo $order_status['name']; ?></option>
-            <?php } else { ?>
-            <option value="<?php echo $order_status['order_status_id']; ?>"><?php echo $order_status['name']; ?></option>
-            <?php } ?>
-            <?php } ?>
-          </select></td>
-      	</tr>
-      	<tr>
-        <td><?php echo $entry_status; ?></td>
-        <td><select name="paybox_status">
-            <?php if ($paybox_status) { ?>
-            <option value="1" selected="selected"><?php echo $text_enabled; ?></option>
-            <option value="0"><?php echo $text_disabled; ?></option>
-            <?php } else { ?>
-            <option value="1"><?php echo $text_enabled; ?></option>
-            <option value="0" selected="selected"><?php echo $text_disabled; ?></option>
-            <?php } ?>
-          </select></td>
-      	</tr>
-      	 <tr>
-          <td><?php echo $entry_sort_order; ?></td>
-          <td><input type="text" name="paybox_sort_order" value="<?php echo $paybox_sort_order; ?>" size="1" /></td>
-        </tr>
-      </table>
-    </form>
-  </div>
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="pull-right">
+                <button type="submit" form="form-cod" data-toggle="tooltip" title="<?=$button_save?>" class="btn btn-primary">
+                  <i class="fa fa-save"></i>
+                </button>
+                <a href="<?=$cancel?>" data-toggle="tooltip" title="<?=$button_cancel?>" class="btn btn-default">
+                  <i class="fa fa-reply"></i>
+                </a>
+            </div>
+            <h1><?=$heading_title?></h1>
+            <ul class="breadcrumb">
+                <?php foreach ($breadcrumbs as $breadcrumb) { ?>
+                <li><a href="<?=$breadcrumb['href']?>"><?=$breadcrumb['text']?></a></li>
+                <?php } ?>
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <?php if ($error_warning) { ?>
+        <div class="alert alert-danger">
+            <i class="fa fa-exclamation-circle"></i><?=$error_warning?>
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+        <?php } ?>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title"><i class="fa fa-pencil"></i><?=$text_edit?></h3>
+            </div>
+            <div class="panel-body">
+                <form action="<?=$action?>" method="post" enctype="multipart/form-data" id="form-paybox" class="form-horizontal">
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="paybox_payment_name">
+                            <span data-toggle="tooltip" title="<?=$tooltip_payment_name?>"><?=$entry_payment_name?></span>
+                        </label>
+                        <div class="col-sm-10">
+                            <input type="text" name="paybox_payment_name" value="<?=$paybox_payment_name?>" placeholder="<?=$paybox_payment_name?>" id="paybox_payment_name" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="paybox_merchant_id">
+                            <span data-toggle="tooltip" title="<?=$tooltip_merchant_id?>"><?=$entry_merchant_id;?></span>
+                        </label>
+                        <div class="col-sm-10">
+                            <input type="text" name="paybox_merchant_id" value="<?=$paybox_merchant_id?>" placeholder="<?=$paybox_merchant_id?>" id="paybox_merchant_id" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="paybox_secret_word">
+                            <span data-toggle="tooltip" title="<?=$tooltip_secret_word?>"><?=$entry_secret_word?></span>
+                        </label>
+                        <div class="col-sm-10">
+                            <input type="text" name="paybox_secret_word" value="<?=$paybox_secret_word?>" placeholder="<?=$paybox_secret_word;?>" id="paybox_secret_word" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="copy_result_url">
+                            <span data-toggle="tooltip" title="<?=$tooltip_result_url?>"><?=$entry_result_url;?></span>
+                        </label>
+                        <div class="col-sm-10">
+                            <input type="text" name="copy_result_url" value="<?=$copy_result_url?>" placeholder="<?=$copy_result_url?>" id="copy_result_url" class="form-control" disabled/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="copy_success_url">
+                            <span data-toggle="tooltip" title="<?=$tooltip_success_url?>"><?=$entry_success_url ?></span>
+                        </label>
+                        <div class="col-sm-10">
+                            <input type="text" name="copy_success_url" value="<?=$copy_success_url?>" placeholder="<?=$copy_success_url?>" id="copy_success_url" class="form-control" disabled/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="copy_fail_url">
+                            <span data-toggle="tooltip" title="<?=$tooltip_fail_url?>"><?= $entry_fail_url?></span>
+                        </label>
+                        <div class="col-sm-10">
+                            <input type="text" name="copy_fail_url" value="<?=$copy_fail_url?>" placeholder="<?=$copy_fail_url?>" id="copy_fail_url" class="form-control" disabled/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="paybox_test">
+                            <span data-toggle="tooltip" title="<?=$tooltip_test?>"><?=$entry_test?></span>
+                        </label>
+                        <div class="col-sm-1">
+                            <select name="paybox_test" class="form-control" id="paybox_test">
+                                <option value="1" <?=($paybox_test == 1) ? 'selected' : ''?>><?=$text_enabled;?></option>
+                                <option value="0" <?=($paybox_test == 0) ? 'selected' : ''?>><?=$text_disabled;?></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="paybox_lifetime">
+                            <span data-toggle="tooltip" title="<?=$tooltip_lifetime?>"><?=$entry_lifetime?></span>
+                        </label>
+                        <div class="col-sm-1">
+                            <input type="number" min="1" step="1" name="paybox_lifetime" value="<?=$paybox_lifetime?>" placeholder="<?=$paybox_lifetime?>" id="paybox_lifetime" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="paybox_order_status_id">
+                            <span data-toggle="tooltip" title="<?=$tooltip_order_status?>"><?=$entry_order_status?></span>
+                        </label>
+                        <div class="col-sm-2">
+                            <select name="paybox_order_status_id" class="form-control" id="paybox_order_status_id">
+                            <?php foreach ($order_statuses as $order_status) { ?>
+                                <option value="<?=$order_status['order_status_id'];?>" <?=($order_status['order_status_id'] == $paybox_order_status_id) ? 'selected' : ''?>><?=$order_status['name'];?></option>
+                            <?php } ?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="paybox_status">
+                            <span data-toggle="tooltip" title="<?=$tooltip_status?>"><?=$entry_status?></span>
+                        </label>
+                        <div class="col-sm-2">
+                            <select name="paybox_status" id="paybox_status" class="form-control">
+                                <option value="1" <?=($paybox_status == 1) ? 'selected' : ''?>><?=$text_enabled; ?></option>
+                                <option value="0" <?=($paybox_status == 0) ? 'selected' : ''?>><?=$text_disabled; ?></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="paybox_sort_order">
+                            <span data-toggle="tooltip" title="<?=$tooltip_sort_order?>"><?=$entry_sort_order?></span>
+                        </label>
+                        <div class="col-sm-2">
+                            <input type="number" name="paybox_sort_order" id="paybox_sort_order" value="<?php echo $paybox_sort_order; ?>" size="1" class="form-control"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
-<?php echo $footer; ?>
+<?=$footer?>

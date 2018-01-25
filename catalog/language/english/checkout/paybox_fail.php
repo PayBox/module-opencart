@@ -1,6 +1,6 @@
 <?php
 // Heading
-$_['heading_title'] = 'Не оплачен!';
+$_['heading_title'] = 'Оплачен!';
 $_['heading_title_customer'] = 'Ваш заказ с номером #%s не оплачен!';
 
 // Text

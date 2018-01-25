@@ -1,20 +1,24 @@
 <?php
 class ControllerPaymentPaybox extends Controller {
-	protected function index() {
+
+    public function index() {
+
         $this->language->load('payment/paybox');
+        $this->load->model('checkout/order');
+        $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+        $this->load->model('account/order');
+        $order_products = $this->model_account_order->getOrderProducts($this->session->data['order_id']);
+        $order_products['total'] = 0;
 
-		$this->data['button_confirm'] = $this->language->get('button_confirm');
-		$this->data['button_back'] = $this->language->get('button_back');
+        $strOrderDescription = "";
+        foreach($order_products as $product) {
+            $strOrderDescription .= @$product["name"]." ".@$product["model"]."*".@$product["quantity"].";";
+            $order_products['total'] += $product['total'];
+        }
 
-		$this->load->model('account/order');
-		$order_products = $this->model_account_order->getOrderProducts($this->session->data['order_id']);
-		$strOrderDescription = "";
-		foreach($order_products as $product){
-			$strOrderDescription .= @$product["name"]." ".@$product["model"]."*".@$product["quantity"].";";
-		}
+        $data['button_confirm'] = $this->language->get('button_confirm');
+        $data['button_back'] = $this->language->get('button_back');
 
-		$this->load->model('payment/paybox');
-		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 
         // Настройки
 
@@ -26,50 +30,45 @@ class ControllerPaymentPaybox extends Controller {
 
         $this->load->model('payment/paybox');
 
-		if($order_info['currency_code'] == "RUB") {
-			$strCurrency = "RUR";
-        } else {
-			$strCurrency = $order_info['currency_code'];
+        $strCurrency = $order_info['currency_code'];
+        if($strCurrency == "RUR") {
+            $strCurrency = "RUB";
         }
 
         $arrReq = array(
-            'pg_amount'         => (int)$order_info['total'],
+            'pg_amount'         => (int)$order_products['total'],
             'pg_check_url'      => HTTPS_SERVER . 'index.php?route=payment/paybox/check',
             'pg_description'    => $strOrderDescription,
             'pg_encoding'       => 'UTF-8',
-			'pg_currency'       => $strCurrency,
-			'pg_user_ip'		=> $_SERVER['REMOTE_ADDR'],
+            'pg_currency'       => $strCurrency,
+            'pg_user_ip'        => $_SERVER['REMOTE_ADDR'],
             'pg_lifetime'       => !empty($lifetime) ? $lifetime * 3600 : 86400,
             'pg_merchant_id'    => $merchant_id,
             'pg_order_id'       => $order_info['order_id'],
             'pg_result_url'     => HTTPS_SERVER . 'index.php?route=payment/paybox/callback',
-			'pg_request_method'	=> 'GET',
+            'pg_request_method' => 'GET',
             'pg_salt'           => rand(21, 43433),
-            'pg_success_url'    => HTTPS_SERVER . 'index.php?route=checkout/paybox_success',
-            'pg_failure_url'    => HTTPS_SERVER . 'index.php?route=checkout/paybox_fail',
+            'pg_success_url'    => HTTPS_SERVER . 'index.php?route=checkout/paybox/success',
+            'pg_failure_url'    => HTTPS_SERVER . 'index.php?route=checkout/paybox/fail',
             'pg_user_ip'        => $_SERVER['REMOTE_ADDR'],
             'pg_user_phone'     => $order_info['telephone'],
             'pg_user_contact_email' => $order_info['email']
         );
 
         if($this->config->get('paybox_test') == 1) {
-			$arrReq['pg_testing_mode'] = 1;
+            $arrReq['pg_testing_mode'] = 1;
         }
 
         $arrReq['pg_sig'] = $this->model_payment_paybox->make('payment.php', $arrReq, $secret_word);
-
         $query = http_build_query($arrReq);
 
-        $this->data['action'] = 'https://paybox.kz/payment.php?' . $query;
+        $data['action'] = 'https://paybox.kz/payment.php?' . $query;
 
         if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/paybox.tpl')) {
-            $this->template = $this->config->get('config_template') . '/template/payment/paybox.tpl';
+            return $this->load->view($this->config->get('config_template') . '/template/payment/paybox.tpl', $data);
         } else {
-            $this->template = 'default/template/payment/paybox.tpl';
+            return $this->load->view('default/template/payment/paybox.tpl', $data);
         }
-
-        $this->render();
-
     }
 
     public function check() {
@@ -80,10 +79,10 @@ class ControllerPaymentPaybox extends Controller {
 
         $arrResponse = array();
 
-       	if(!empty($this->request->post))
-			$data = $this->request->post;
-		else
-			$data = $this->request->get;
+        if(!empty($this->request->post))
+            $data = $this->request->post;
+        else
+            $data = $this->request->get;
 
         $pg_sig = !empty($data['pg_sig'])?$data['pg_sig']:'';
         unset($data['pg_sig']);
@@ -122,17 +121,16 @@ class ControllerPaymentPaybox extends Controller {
     }
 
     public function callback() {
-
         $this->language->load('payment/paybox');
         $this->load->model('payment/paybox');
         $this->load->model('checkout/order');
 
         $arrResponse = array();
 
-		if(!empty($this->request->post))
-			$data = $this->request->post;
-		else
-			$data = $this->request->get;
+        if(!empty($this->request->post))
+            $data = $this->request->post;
+        else
+            $data = $this->request->get;
 
         $pg_sig = $data['pg_sig'];
         unset($data['pg_sig']);
@@ -149,10 +147,10 @@ class ControllerPaymentPaybox extends Controller {
 
         $arrResponse['pg_salt'] = $data['pg_salt'];
 
-		if($data['pg_result'] != 1){
-			$arrResponse['pg_status'] = 'failed';
+        if($data['pg_result'] != 1){
+            $arrResponse['pg_status'] = 'failed';
             $arrResponse['pg_error_description'] = '';
-		}
+        }
         elseif(isset($order_info['order_id'])) {
             $arrResponse['pg_status'] = 'ok';
             $arrResponse['pg_error_description'] = '';
@@ -174,15 +172,26 @@ class ControllerPaymentPaybox extends Controller {
 
         if($arrResponse['pg_status'] == 'ok') {
             if($order_info['order_status_id'] == 0) {
-                $this->model_checkout_order->confirm($order_id, $this->config->get('paybox_order_status_id'), 'PayBox');
+                $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('paybox_order_status_id'), 'Paybox');
                 return;
             }
-
-            if($order_info['order_status_id'] != $this->config->get('paybox_order_status_id'))
-                $this->model_checkout_order->update($order_id, $this->config->get('paybox_order_status_id'), 'PayBox', TRUE);
+            if($order_info['order_status_id'] != $this->config->get('paybox_order_status_id')) {
+                $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('paybox_order_status_id'), 'Paybox', TRUE);
+            }
 
         }
 
+    }
+
+
+    private function getVersion() {
+        $version = explode('.', VERSION);
+        return array(
+            'alpha' => $version[0],
+            'beta' => $version[1],
+            'rc' => $version[2],
+            'public' => $version[3]
+        );
     }
 }
 ?>

@@ -23,6 +23,7 @@ class ModelPaymentPaybox extends Model {
 			$method_data = array(
 				'code'         => 'paybox',
 				'title'      => !$this->config->get('paybox_payment_name') ? $this->language->get('text_title') : $this->config->get('paybox_payment_name'),
+                'terms' => '',
 				'sort_order' => $this->config->get('paybox_sort_order')
 			);
 		}
