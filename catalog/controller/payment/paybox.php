@@ -64,10 +64,10 @@ class ControllerPaymentPaybox extends Controller {
 
         $data['action'] = 'https://paybox.kz/payment.php?' . $query;
 
-        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/paybox.tpl')) {
-            return $this->load->view($this->config->get('config_template') . '/template/payment/paybox.tpl', $data);
+        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/payment/paybox.tpl')) {
+            return $this->load->view($this->config->get('config_template') . '/payment/paybox.tpl', $data);
         } else {
-            return $this->load->view('default/template/payment/paybox.tpl', $data);
+            return $this->load->view('payment/paybox.tpl', $data);
         }
     }
 

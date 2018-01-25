@@ -75,8 +75,9 @@ class ControllerCheckoutPayboxFail extends Controller {
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/common/paybox_fail.tpl')) {
 			$this->template = $this->config->get('config_template') . '/template/common/paybox_fail.tpl';
 		} else {
-			$this->template = 'default/template/common/paybox_fail.tpl';
+			$this->template = 'common/paybox_fail.tpl';
 		}
+
 
         $data['header'] = $this->load->controller('common/header');
         $data['column_left'] = $this->load->controller('common/column_left');
