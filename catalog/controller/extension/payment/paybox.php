@@ -62,7 +62,7 @@ class ControllerExtensionPaymentPaybox extends Controller {
         $arrReq['pg_sig'] = $this->model_payment_paybox->make('payment.php', $arrReq, $secret_word);
         $query = http_build_query($arrReq);
 
-        $data['action'] = 'https://paybox.kz/payment.php?' . $query;
+        $data['action'] = 'https://api.paybox.money/payment.php?' . $query;
 
         if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/payment/paybox')) {
             return $this->load->view($this->config->get('config_template') . '/payment/paybox', $data);
