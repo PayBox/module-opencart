@@ -12,7 +12,7 @@ class ControllerPaymentPaybox extends Controller {
 		foreach($order_products as $product){
 			$strOrderDescription .= @$product["name"]." ".@$product["model"]."*".@$product["quantity"].";";
 		}
-		
+
 		$this->load->model('payment/paybox');
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 
@@ -31,7 +31,7 @@ class ControllerPaymentPaybox extends Controller {
 			$strCurrency = "RUR";
 		else
 			$strCurrency = $order_info['currency_code'];
-		
+
         $arrReq = array(
             'pg_amount'         => (int)$order_info['total'],
             'pg_check_url'      => HTTPS_SERVER . 'index.php?route=payment/paybox/check',
@@ -61,7 +61,7 @@ class ControllerPaymentPaybox extends Controller {
 
         $query = http_build_query($arrReq);
 
-        $this->data['action'] = 'https://paybox.kz/payment.php?' . $query;
+        $this->data['action'] = 'https://api.paybox.money/payment.php?' . $query;
 
         if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/paybox.tpl')) {
             $this->template = $this->config->get('config_template') . '/template/payment/paybox.tpl';
@@ -85,7 +85,7 @@ class ControllerPaymentPaybox extends Controller {
 			$data = $this->request->post;
 		else
 			$data = $this->request->get;
-		
+
         $pg_sig = !empty($data['pg_sig'])?$data['pg_sig']:'';
         unset($data['pg_sig']);
 
@@ -134,7 +134,7 @@ class ControllerPaymentPaybox extends Controller {
 			$data = $this->request->post;
 		else
 			$data = $this->request->get;
-		
+
         $pg_sig = $data['pg_sig'];
         unset($data['pg_sig']);
 
