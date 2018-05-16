@@ -36,7 +36,7 @@ class ControllerExtensionPaymentPaybox extends Controller {
         }
 
         $arrReq = array(
-            'pg_amount'         => (int)$order_products['total'],
+            'pg_amount'         => (int)$order_info['total'],
             'pg_check_url'      => HTTPS_SERVER . 'index.php?route=extension/payment/paybox/check',
             'pg_description'    => $strOrderDescription,
             'pg_encoding'       => 'UTF-8',
