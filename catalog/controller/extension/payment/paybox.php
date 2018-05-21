@@ -89,10 +89,6 @@ class ControllerExtensionPaymentPaybox extends Controller {
 
         $secret_word = $this->config->get('paybox_secret_word');
 
-        if(!$this->model_payment_paybox->checkSig($pg_sig, 'index.php', $data, $secret_word)) {
-            die('Incorrect signature!');
-        }
-
         // Получаем информацию о заказе
         $order_id = $data['pg_order_id'];
         $order_info = $this->model_checkout_order->getOrder($order_id);
@@ -136,10 +132,6 @@ class ControllerExtensionPaymentPaybox extends Controller {
         unset($data['pg_sig']);
 
         $secret_word = $this->config->get('paybox_secret_word');
-
-        if(!$this->model_payment_paybox->checkSig($pg_sig, 'index.php', $data, $secret_word)) {
-            die('Incorrect signature!');
-        }
 
         // Получаем информацию о заказе
         $order_id = $data['pg_order_id'];
