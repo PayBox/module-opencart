@@ -33,29 +33,29 @@
                 <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-paybox" class="form-horizontal">
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="paybox_payment_name">
+                        <label class="col-sm-2 control-label" for="payment_paybox_payment_name">
                             <span data-toggle="tooltip" title="{{ tooltip_payment_name }}"> {{ entry_payment_name }}</span>
                         </label>
                         <div class="col-sm-10">
-                            <input type="text" name="paybox_payment_name" value="{{ paybox_payment_name }}" placeholder="{{ paybox_payment_name }}" id="paybox_payment_name" class="form-control" />
+                            <input type="text" name="payment_paybox_payment_name" value="{{ payment_paybox_payment_name }}" placeholder="{{ payment_paybox_payment_name }}" id="payment_paybox_payment_name" class="form-control" />
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="paybox_merchant_id">
+                        <label class="col-sm-2 control-label" for="payment_paybox_merchant_id">
                             <span data-toggle="tooltip" title="{{ tooltip_merchant_id }}">{{ entry_merchant_id }}</span>
                         </label>
                         <div class="col-sm-10">
-                            <input type="text" name="paybox_merchant_id" value="{{ paybox_merchant_id }}" placeholder="{{ paybox_merchant_id }}" id="paybox_merchant_id" class="form-control" />
+                            <input type="text" name="payment_paybox_merchant_id" value="{{ payment_paybox_merchant_id }}" placeholder="{{ payment_paybox_merchant_id }}" id="payment_paybox_merchant_id" class="form-control" />
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="paybox_secret_word">
+                        <label class="col-sm-2 control-label" for="payment_paybox_secret_word">
                             <span data-toggle="tooltip" title="{{ tooltip_secret_word }}">{{ entry_secret_word }}</span>
                         </label>
                         <div class="col-sm-10">
-                            <input type="text" name="paybox_secret_word" value="{{ paybox_secret_word }}" placeholder="{{ paybox_secret_word }}" id="paybox_secret_word" class="form-control" />
+                            <input type="text" name="payment_paybox_secret_word" value="{{ payment_paybox_secret_word }}" placeholder="{{ payment_paybox_secret_word }}" id="payment_paybox_secret_word" class="form-control" />
                         </div>
                     </div>
 
@@ -87,57 +87,57 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="paybox_test">
+                        <label class="col-sm-2 control-label" for="payment_paybox_test">
                             <span data-toggle="tooltip" title="{{ tooltip_test }}">{{ entry_test }}</span>
                         </label>
                         <div class="col-sm-1">
-                            <select name="paybox_test" class="form-control" id="paybox_test">
-                                <option value="1" {{ (paybox_test == 1) ? 'selected' : '' }}> {{ text_enabled }}</option>
-                                <option value="0" {{ (paybox_test == 0) ? 'selected' : '' }}> {{ text_disabled }}</option>
+                            <select name="payment_paybox_test" class="form-control" id="payment_paybox_test">
+                                <option value="1" {{ (payment_paybox_test == 1) ? 'selected' : '' }}> {{ text_enabled }}</option>
+                                <option value="0" {{ (payment_paybox_test == 0) ? 'selected' : '' }}> {{ text_disabled }}</option>
                             </select>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="paybox_lifetime">
+                        <label class="col-sm-2 control-label" for="payment_paybox_lifetime">
                             <span data-toggle="tooltip" title="{{ tooltip_lifetime }}">{{ entry_lifetime }}</span>
                         </label>
                         <div class="col-sm-1">
-                            <input type="number" min="1" step="1" name="paybox_lifetime" value="{{ paybox_lifetime }}" placeholder="{{ paybox_lifetime }}" id="paybox_lifetime" class="form-control" />
+                            <input type="number" min="1" step="1" name="payment_paybox_lifetime" value="{{ payment_paybox_lifetime }}" placeholder="{{ payment_paybox_lifetime }}" id="payment_paybox_lifetime" class="form-control" />
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="paybox_order_status_id">
+                        <label class="col-sm-2 control-label" for="payment_paybox_order_status_id">
                             <span data-toggle="tooltip" title="{{ tooltip_order_status }}">{{ entry_order_status }}</span>
                         </label>
                         <div class="col-sm-2">
-                            <select name="paybox_order_status_id" class="form-control" id="paybox_order_status_id">
+                            <select name="payment_paybox_order_status_id" class="form-control" id="payment_paybox_order_status_id">
                             {% for order_status in order_statuses %}
-                                <option value="{{ order_status['order_status_id'] }}" {{ (order_status['order_status_id'] == paybox_order_status_id) ? 'selected' : '' }}> {{ order_status['name'] }}</option>
+                                <option value="{{ order_status['order_status_id'] }}" {{ (order_status['order_status_id'] == payment_paybox_order_status_id) ? 'selected' : '' }}> {{ order_status['name'] }}</option>
                             {% endfor %}
                             </select>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="paybox_status">
+                        <label class="col-sm-2 control-label" for="payment_paybox_status">
                             <span data-toggle="tooltip" title="{{ tooltip_status }}">{{ entry_status }}</span>
                         </label>
                         <div class="col-sm-2">
-                            <select name="paybox_status" id="paybox_status" class="form-control">
-                                <option value="1" {{ (paybox_status == 1) ? 'selected' : '' }}>{{ text_enabled }}</option>
-                                <option value="0" {{ (paybox_status == 0) ? 'selected' : '' }}>{{ text_disabled }}</option>
+                            <select name="payment_paybox_status" id="payment_paybox_status" class="form-control">
+                                <option value="1" {{ (payment_paybox_status == 1) ? 'selected' : '' }}>{{ text_enabled }}</option>
+                                <option value="0" {{ (payment_paybox_status == 0) ? 'selected' : '' }}>{{ text_disabled }}</option>
                             </select>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="paybox_sort_order">
+                        <label class="col-sm-2 control-label" for="payment_paybox_sort_order">
                             <span data-toggle="tooltip" title="{{ tooltip_sort_order }}">{{ entry_sort_order }}</span>
                         </label>
                         <div class="col-sm-2">
-                            <input type="number" name="paybox_sort_order" id="paybox_sort_order" value="{{ paybox_sort_order }}" size="1" class="form-control"/>
+                            <input type="number" name="payment_paybox_sort_order" id="payment_paybox_sort_order" value="{{ payment_paybox_sort_order }}" size="1" class="form-control"/>
                         </div>
                     </div>
                 </form>
