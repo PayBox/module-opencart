@@ -3,17 +3,16 @@ class ControllerExtensionPaymentPaybox extends Controller {
 
     public function index() {
 
-        $this->language->load('extension/payment/paybox');
+        $this->language->load('payment/paybox');
         $this->load->model('checkout/order');
         $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
         $this->load->model('account/order');
         $order_products = $this->model_account_order->getOrderProducts($this->session->data['order_id']);
-        $order_products['total'] = 0;
+        $order_products['total'] = $order_info['total'];
 
         $strOrderDescription = "";
         foreach($order_products as $product) {
             $strOrderDescription .= @$product["name"]." ".@$product["model"]."*".@$product["quantity"].";";
-            $order_products['total'] += $product['total'];
         }
 
         $data['button_confirm'] = $this->language->get('button_confirm');
@@ -22,9 +21,9 @@ class ControllerExtensionPaymentPaybox extends Controller {
 
         // Настройки
 
-        $merchant_id = $this->config->get('payment_paybox_merchant_id');
-        $secret_word = $this->config->get('payment_paybox_secret_word');
-        $lifetime = $this->config->get('payment_paybox_lifetime');
+        $merchant_id = $this->config->get('paybox_merchant_id');
+        $secret_word = $this->config->get('paybox_secret_word');
+        $lifetime = $this->config->get('paybox_lifetime');
 
         $msg_description = $this->language->get('msg_description');
 
@@ -37,7 +36,7 @@ class ControllerExtensionPaymentPaybox extends Controller {
 
         $arrReq = array(
             'pg_amount'         => (int)$order_products['total'],
-            'pg_check_url'      => HTTPS_SERVER . 'index.php?route=extension/payment/paybox/check',
+            'pg_check_url'      => HTTPS_SERVER . 'index.php?route=payment/paybox/check',
             'pg_description'    => $strOrderDescription,
             'pg_encoding'       => 'UTF-8',
             'pg_currency'       => $strCurrency,
@@ -49,13 +48,13 @@ class ControllerExtensionPaymentPaybox extends Controller {
             'pg_request_method' => 'GET',
             'pg_salt'           => rand(21, 43433),
             'pg_success_url'    => HTTPS_SERVER . 'index.php?route=checkout/success',
-            'pg_failure_url'    => HTTPS_SERVER . 'index.php?route=checkout/failure',
+            'pg_failure_url'    => HTTPS_SERVER . 'index.php?route=checkout/fail',
             'pg_user_ip'        => $_SERVER['REMOTE_ADDR'],
             'pg_user_phone'     => $order_info['telephone'],
             'pg_user_contact_email' => $order_info['email']
         );
 
-        if($this->config->get('payment_paybox_test') == 1) {
+        if($this->config->get('paybox_test') == 1) {
             $arrReq['pg_testing_mode'] = 1;
         }
 
@@ -64,8 +63,8 @@ class ControllerExtensionPaymentPaybox extends Controller {
 
         $data['action'] = 'https://api.paybox.money/payment.php?' . $query;
 
-        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/extension/payment/paybox')) {
-            return $this->load->view($this->config->get('config_template') . '/extension/payment/paybox', $data);
+        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/payment/paybox')) {
+            return $this->load->view($this->config->get('config_template') . '/payment/paybox', $data);
         } else {
             return $this->load->view('extension/payment/paybox', $data);
         }
@@ -73,7 +72,7 @@ class ControllerExtensionPaymentPaybox extends Controller {
 
     public function check() {
 
-        $this->language->load('extension/payment/paybox');
+        $this->language->load('payment/paybox');
         $this->load->model('checkout/order');
         $this->load->model('extension/payment/paybox');
 
@@ -87,7 +86,11 @@ class ControllerExtensionPaymentPaybox extends Controller {
         $pg_sig = !empty($data['pg_sig'])?$data['pg_sig']:'';
         unset($data['pg_sig']);
 
-        $secret_word = $this->config->get('payment_paybox_secret_word');
+        $secret_word = $this->config->get('paybox_secret_word');
+
+        if(!$this->model_extension_payment_paybox->checkSig($pg_sig, 'index.php', $data, $secret_word)) {
+            die('Incorrect signature!');
+        }
 
         // Получаем информацию о заказе
         $order_id = $data['pg_order_id'];
@@ -117,7 +120,7 @@ class ControllerExtensionPaymentPaybox extends Controller {
     }
 
     public function callback() {
-        $this->language->load('extension/payment/paybox');
+        $this->language->load('payment/paybox');
         $this->load->model('extension/payment/paybox');
         $this->load->model('checkout/order');
 
@@ -131,7 +134,11 @@ class ControllerExtensionPaymentPaybox extends Controller {
         $pg_sig = $data['pg_sig'];
         unset($data['pg_sig']);
 
-        $secret_word = $this->config->get('payment_paybox_secret_word');
+        $secret_word = $this->config->get('paybox_secret_word');
+
+        if(!$this->model_extension_payment_paybox->checkSig($pg_sig, 'index.php', $data, $secret_word)) {
+            die('Incorrect signature!');
+        }
 
         // Получаем информацию о заказе
         $order_id = $data['pg_order_id'];
@@ -164,11 +171,11 @@ class ControllerExtensionPaymentPaybox extends Controller {
 
         if($arrResponse['pg_status'] == 'ok') {
             if($order_info['order_status_id'] == 0) {
-                $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('payment_paybox_order_status_id'), 'Paybox');
+                $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('paybox_order_status_id'), 'Paybox');
                 return;
             }
-            if($order_info['order_status_id'] != $this->config->get('payment_paybox_order_status_id')) {
-                $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('payment_paybox_order_status_id'), 'Paybox', TRUE);
+            if($order_info['order_status_id'] != $this->config->get('paybox_order_status_id')) {
+                $this->model_checkout_order->addOrderHistory($order_id, $this->config->get('paybox_order_status_id'), 'Paybox', TRUE);
             }
 
         }
