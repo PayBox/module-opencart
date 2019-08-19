@@ -8,12 +8,11 @@ class ControllerPaymentPaybox extends Controller {
         $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
         $this->load->model('account/order');
         $order_products = $this->model_account_order->getOrderProducts($this->session->data['order_id']);
-        $order_products['total'] = 0;
+        $order_products['total'] = $order_info['total'];
 
         $strOrderDescription = "";
         foreach($order_products as $product) {
             $strOrderDescription .= @$product["name"]." ".@$product["model"]."*".@$product["quantity"].";";
-            $order_products['total'] += $product['total'];
         }
 
         $data['button_confirm'] = $this->language->get('button_confirm');
