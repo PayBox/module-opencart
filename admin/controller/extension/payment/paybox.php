@@ -201,10 +201,6 @@ class ControllerExtensionPaymentPaybox extends Controller {
             $this->error['secret_word'] = $this->language->get('error_secret_word');
         }
 
-        if (!$this->request->post['payment_paybox_status']) {
-            $this->error['payment_paybox_status'] = $this->language->get('error_paybox_status');
-        }
-
         if (!$this->request->post['paybox_order_status_id']) {
             $this->error['paybox_order_status_id'] = $this->language->get('error_order_status_id');
         }
