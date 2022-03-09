@@ -59,6 +59,16 @@ class ControllerExtensionPaymentPaybox extends Controller {
             $arrReq['pg_testing_mode'] = 1;
         }
 
+        if ($this->config->get('payment_paybox_ofd') == 1) {
+            foreach ($order_products as $qp) {
+                $arrReq['pg_receipt_positions'][] = [
+                    'name' => $qp['name'],
+                    'price' => $qp['price'],
+                    'count' => $qp['quantity'],
+                ];
+            }
+        }
+
         $arrReq['pg_sig'] = $this->model_extension_payment_paybox->make('payment.php', $arrReq, $secret_word);
         $query = http_build_query($arrReq);
 
