@@ -133,6 +133,18 @@
                     </div>
 
                     <div class="form-group">
+                        <label class="col-sm-2 control-label" for="payment_paybox_ofd">
+                            <span data-toggle="tooltip" title="{{ tooltip_ofd }}">{{ entry_ofd }}</span>
+                        </label>
+                        <div class="col-sm-2">
+                            <select name="payment_paybox_ofd" id="payment_paybox_ofd" class="form-control">
+                                <option value="1" {{ (payment_paybox_ofd == 1) ? 'selected' : '' }}>{{ text_enabled }}</option>
+                                <option value="0" {{ (payment_paybox_ofd == 0) ? 'selected' : '' }}>{{ text_disabled }}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <label class="col-sm-2 control-label" for="payment_paybox_sort_order">
                             <span data-toggle="tooltip" title="{{ tooltip_sort_order }}">{{ entry_sort_order }}</span>
                         </label>
