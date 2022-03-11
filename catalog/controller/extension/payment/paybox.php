@@ -50,7 +50,6 @@ class ControllerExtensionPaymentPaybox extends Controller {
             'pg_salt'           => rand(21, 43433),
             'pg_success_url'    => HTTPS_SERVER . 'index.php?route=checkout/success',
             'pg_failure_url'    => HTTPS_SERVER . 'index.php?route=checkout/failure',
-            'pg_user_ip'        => $_SERVER['REMOTE_ADDR'],
             'pg_user_phone'     => $order_info['telephone'],
             'pg_user_contact_email' => $order_info['email']
         );
@@ -60,13 +59,12 @@ class ControllerExtensionPaymentPaybox extends Controller {
         }
 
         if ($this->config->get('payment_paybox_ofd') == 1) {
-            foreach ($order_products as $qp) {
-                $arrReq['pg_receipt_positions'][] = [
-                    'name' => $qp['name'],
-                    'price' => $qp['price'],
-                    'count' => $qp['quantity'],
-                ];
-            }
+            $arrReq['pg_receipt_positions'][] = [
+                'count' => $order_products[0]['quantity'],
+                'name' => $order_products[0]['name'],
+                'price' => $order_products[0]['price'],
+                'tax_type' => $order_products[0]['tax'],
+            ];
         }
 
         $arrReq['pg_sig'] = $this->model_extension_payment_paybox->make('payment.php', $arrReq, $secret_word);
