@@ -59,12 +59,14 @@ class ControllerExtensionPaymentPaybox extends Controller {
         }
 
         if ($this->config->get('payment_paybox_ofd') == 1) {
-            $arrReq['pg_receipt_positions'][] = [
-                'count' => $order_products[0]['quantity'],
-                'name' => $order_products[0]['name'],
-                'price' => $order_products[0]['price'],
-                'tax_type' => $order_products[0]['tax'],
-            ];
+            foreach ($this->model_account_order->getOrderProducts($this->session->data['order_id']) as $key => $value) {
+                $arrReq['pg_receipt_positions'][] = [
+                    'count' => $value['quantity'],
+                    'name' => $value['name'],
+                    'price' => $value['price'],
+                    'tax_type' => $value['tax']
+                ];
+            }
         }
 
         $arrReq['pg_sig'] = $this->model_extension_payment_paybox->make('payment.php', $arrReq, $secret_word);
