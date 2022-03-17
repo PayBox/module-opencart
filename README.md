@@ -7,6 +7,7 @@
 [Opencart 2.2.x](https://github.com/PayBox/module-opencart/archive/2.2.zip)
 [Opencart 2.3.x](https://github.com/PayBox/module-opencart/archive/2.3.zip)
 [Opencart 3.0.x](https://github.com/PayBox/module-opencart/archive/3.0.zip)
+[Opencart 3.0.3](https://github.com/PayBox/module-opencart/archive/3.0.3.zip)
 
 1. Распаковывайте архив в корень проекта, по умолчанию для OpenCart это каталог upload
 2. Заходите в админку *Расширения->Оплата* (Extensions->Payments), включаете модуль Paybox

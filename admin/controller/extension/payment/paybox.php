@@ -32,6 +32,7 @@ class ControllerExtensionPaymentPaybox extends Controller {
         $data['entry_success_url'] = $this->language->get('entry_success_url');
         $data['entry_fail_url'] = $this->language->get('entry_fail_url');
         $data['entry_result_url'] = $this->language->get('entry_result_url');
+        $data['entry_ofd'] = $this->language->get('entry_ofd');
         $data['copy_result_url']    = HTTP_CATALOG . 'index.php?route=extension/payment/paybox/callback';
         $data['copy_success_url']   = HTTP_CATALOG . 'index.php?route=extension/payment/paybox/success';
         $data['copy_fail_url']  = HTTP_CATALOG . 'index.php?route=extension/payment/paybox/fail';
@@ -144,6 +145,12 @@ class ControllerExtensionPaymentPaybox extends Controller {
             $data['paybox_order_status_id'] = $this->request->post['paybox_order_status_id'];
         } else {
             $data['paybox_order_status_id'] = $this->config->get('paybox_order_status_id');
+        }
+
+        if (isset($this->request->post['payment_paybox_ofd'])) {
+            $data['payment_paybox_ofd'] = $this->request->post['payment_paybox_ofd'];
+        } else {
+            $data['payment_paybox_ofd'] = $this->config->get('payment_paybox_ofd');
         }
 
         $this->load->model('localisation/order_status');

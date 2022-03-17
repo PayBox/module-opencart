@@ -32,13 +32,12 @@ class ModelExtensionPaymentPaybox extends Model {
     }
 
     public function make($scriptName, $arrReq, $secret_word) {
+        $sign_data = $this->prepare_send($arrReq);
+        ksort($sign_data);
 
-        ksort($arrReq);
-
-        array_unshift($arrReq, $scriptName);
-        array_push($arrReq, $secret_word);
-
-        $sig = implode(';', $arrReq);
+        array_unshift($sign_data, $scriptName);
+        array_push($sign_data, $secret_word);
+        $sig = implode(';', $sign_data);
 
         return md5($sig);
 
@@ -48,6 +47,24 @@ class ModelExtensionPaymentPaybox extends Model {
 
         return (string)$signature === $this->make($scriptName, $arrReq, $secret_word);
 
+    }
+
+    public function prepare_send($data, $parent_name = '') {
+        if (!is_array($data)) return $data;
+
+        $arrFlatParams = [];
+        $i = 0;
+        foreach ($data as $key => $val) {
+            $i++;
+            $name = $parent_name . ((string) $key) . sprintf('%03d', $i);
+            if (is_array($val)) {
+                $arrFlatParams = array_merge($arrFlatParams, $this->prepare_send($val, $name));
+                continue;
+            }
+            $arrFlatParams += array($name => (string)$val);
+        }
+
+        return $arrFlatParams;
     }
 
 }
