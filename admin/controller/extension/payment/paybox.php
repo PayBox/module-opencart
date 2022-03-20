@@ -52,9 +52,21 @@ class ControllerExtensionPaymentPaybox extends Controller {
         $data['entry_geo_zone'] = $this->language->get('entry_geo_zone');
         $data['entry_status'] = $this->language->get('entry_status');
         $data['entry_sort_order'] = $this->language->get('entry_sort_order');
+        $data['entity_ofd_tax_type'] = $this->language->get('entity_ofd_tax_type');
         $data['button_save'] = $this->language->get('button_save');
         $data['button_cancel'] = $this->language->get('button_cancel');
         $data['tab_general'] = $this->language->get('tab_general');
+        //
+        $data['tax_type_vat_none'] = $this->language->get('tax_type_vat_none');
+        $data['tax_type_vat_0'] = $this->language->get('tax_type_vat_0');
+        $data['tax_type_vat_12'] = $this->language->get('tax_type_vat_12');
+        $data['tax_type_vat_112'] = $this->language->get('tax_type_vat_112');
+        $data['tax_type_vat_18'] = $this->language->get('tax_type_vat_18');
+        $data['tax_type_vat_118'] = $this->language->get('tax_type_vat_118');
+        $data['tax_type_vat_10'] = $this->language->get('tax_type_vat_10');
+        $data['tax_type_vat_110'] = $this->language->get('tax_type_vat_110');
+        $data['tax_type_vat_20'] = $this->language->get('tax_type_vat_20');
+        $data['tax_type_vat_120'] = $this->language->get('tax_type_vat_120');
 
         //
         if (isset($this->error['warning'])) {
@@ -151,6 +163,12 @@ class ControllerExtensionPaymentPaybox extends Controller {
             $data['payment_paybox_ofd'] = $this->request->post['payment_paybox_ofd'];
         } else {
             $data['payment_paybox_ofd'] = $this->config->get('payment_paybox_ofd');
+        }
+
+        if (isset($this->request->post['payment_paybox_sort_order'])) {
+            $data['payment_paybox_sort_order'] = $this->request->post['payment_paybox_sort_order'];
+        } else {
+            $data['payment_paybox_sort_order'] = $this->config->get('payment_paybox_sort_order');
         }
 
         $this->load->model('localisation/order_status');

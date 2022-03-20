@@ -64,7 +64,7 @@ class ControllerExtensionPaymentPaybox extends Controller {
                     'count' => $value['quantity'],
                     'name' => $value['name'],
                     'price' => $value['price'],
-                    'tax_type' => $value['tax']
+                    'tax_type' => $this->config->get('payment_paybox_ofd_tax_type')
                 ];
             }
         }
