@@ -11,9 +11,7 @@ class ControllerExtensionPaymentPaybox extends Controller {
         $this->load->model('setting/setting');
 
         if (($this->request->server['REQUEST_METHOD'] == 'POST') && ($this->validate())) {
-            $this->request->post['paybox_status'] = $this->request->post['payment_paybox_status'];
-            $this->model_setting_setting->editSetting('paybox', $this->request->post);
-            $this->model_setting_setting->editSetting('payment', $this->request->post);
+            $this->model_setting_setting->editSetting('payment_paybox', $this->request->post);
             $this->session->data['success'] = $this->language->get('text_success');
             $this->response->redirect($this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=payment', true));
         }
@@ -163,6 +161,12 @@ class ControllerExtensionPaymentPaybox extends Controller {
             $data['payment_paybox_ofd'] = $this->request->post['payment_paybox_ofd'];
         } else {
             $data['payment_paybox_ofd'] = $this->config->get('payment_paybox_ofd');
+        }
+
+        if (isset($this->request->post['payment_paybox_ofd_tax_type'])) {
+            $data['payment_paybox_ofd_tax_type'] = $this->request->post['payment_paybox_ofd_tax_type'];
+        } else {
+            $data['payment_paybox_ofd_tax_type'] = $this->config->get('payment_paybox_ofd_tax_type');
         }
 
         if (isset($this->request->post['payment_paybox_sort_order'])) {

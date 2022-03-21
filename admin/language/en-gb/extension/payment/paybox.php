@@ -24,7 +24,7 @@ $_['entry_result_url']   = 'Result url';
 $_['entry_fail_url']     = 'Fail url';
 $_['entry_success_url']  = 'Success url';
 $_['entry_ofd'] = 'ОФД';
-$_['entity_ofd_tax_type'] = 'Тип налогооблажения';
+$_['entity_ofd_tax_type'] = 'Тип налогов';
 
 // Tax type
 $_['tax_type_vat_none'] = 'Без налога';
@@ -51,7 +51,7 @@ $_['tooltip_order_status'] = 'Статус, который установитс�
 $_['tooltip_status'] = 'Статус плагина';
 $_['tooltip_sort_order'] = 'Порядок сортировки плагина';
 $_['tooltip_ofd'] = 'Статус подкчлюения ОФД';
-$_['tooltip_ofd_tax_type'] = 'Тип налогооблажения для ОФД';
+$_['tooltip_ofd_tax_type'] = 'Тип налогов для ОФД';
 
 
 // Error
