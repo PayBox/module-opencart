@@ -160,6 +160,15 @@
                                 <option value="9" {{ (payment_paybox_ofd_tax_type == 9)  ? 'selected' : '' }}>{{ tax_type_vat_120 }}</option>
                             </select>
                         </div>
+                        <label class="col-sm-2 control-label" for="payment_paybox_ofd_shipping">
+                            <span data-toggle="tooltip" title="{{ tooltip_ofd_shipping }}">{{ entity_ofd_shipping }}</span>
+                        </label>
+                        <div class="col-sm-2">
+                            <select name="payment_paybox_ofd_shipping" id="payment_paybox_ofd_shipping" class="form-control">
+                                <option value="1" {{ (payment_paybox_ofd_shipping == 1) ? 'selected' : '' }}>{{ text_enabled }}</option>
+                                <option value="0" {{ (payment_paybox_ofd_shipping == 0) ? 'selected' : '' }}>{{ text_disabled }}</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="form-group">

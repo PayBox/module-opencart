@@ -52,6 +52,9 @@ class ControllerExtensionPaymentPaybox extends Controller {
         $data['button_save'] = $this->language->get('button_save');
         $data['button_cancel'] = $this->language->get('button_cancel');
         $data['tab_general'] = $this->language->get('tab_general');
+        $data['tooltip_ofd_tax_type'] = $this->language->get('tooltip_ofd_tax_type');
+        $data['tooltip_ofd_shipping'] = $this->language->get('tooltip_ofd_shipping');
+        $data['entity_ofd_shipping'] = $this->language->get('entity_ofd_shipping');
         //
         $data['tax_type_vat_none'] = $this->language->get('tax_type_vat_none');
         $data['tax_type_vat_0'] = $this->language->get('tax_type_vat_0');
@@ -165,6 +168,12 @@ class ControllerExtensionPaymentPaybox extends Controller {
             $data['payment_paybox_ofd_tax_type'] = $this->request->post['payment_paybox_ofd_tax_type'];
         } else {
             $data['payment_paybox_ofd_tax_type'] = $this->config->get('payment_paybox_ofd_tax_type');
+        }
+
+        if (isset($this->request->post['payment_paybox_ofd_shipping'])) {
+            $data['payment_paybox_ofd_shipping'] = $this->request->post['payment_paybox_ofd_shipping'];
+        } else {
+            $data['payment_paybox_ofd_shipping'] = $this->config->get('payment_paybox_ofd_shipping');
         }
 
         $this->load->model('localisation/order_status');
