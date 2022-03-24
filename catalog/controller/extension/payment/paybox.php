@@ -78,7 +78,7 @@ class ControllerExtensionPaymentPaybox extends Controller {
                     'count' => 1,
                     'name' => $this->session->data['shipping_method']['title'],
                     'price' => $this->session->data['shipping_method']['cost'],
-                    'tax_type' => $this->session->data['shipping_method']['tax_class_id']
+                    'tax_type' => $this->config->get('payment_paybox_ofd_tax_type')
                 ];
             }
         }
