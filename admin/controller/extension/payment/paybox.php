@@ -1,8 +1,6 @@
 <?php
 class ControllerExtensionPaymentPaybox extends Controller {
 
-    public $error = [];
-
     public function index() {
         $this->load->language('extension/payment/paybox');
 
@@ -11,9 +9,7 @@ class ControllerExtensionPaymentPaybox extends Controller {
         $this->load->model('setting/setting');
 
         if (($this->request->server['REQUEST_METHOD'] == 'POST') && ($this->validate())) {
-            $this->request->post['paybox_status'] = $this->request->post['payment_paybox_status'];
-            $this->model_setting_setting->editSetting('paybox', $this->request->post);
-            $this->model_setting_setting->editSetting('payment', $this->request->post);
+            $this->model_setting_setting->editSetting('payment_paybox', $this->request->post);
             $this->session->data['success'] = $this->language->get('text_success');
             $this->response->redirect($this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=payment', true));
         }
@@ -34,8 +30,8 @@ class ControllerExtensionPaymentPaybox extends Controller {
         $data['entry_result_url'] = $this->language->get('entry_result_url');
         $data['entry_ofd'] = $this->language->get('entry_ofd');
         $data['copy_result_url']    = HTTP_CATALOG . 'index.php?route=extension/payment/paybox/callback';
-        $data['copy_success_url']   = HTTP_CATALOG . 'index.php?route=extension/payment/paybox/success';
-        $data['copy_fail_url']  = HTTP_CATALOG . 'index.php?route=extension/payment/paybox/fail';
+        $data['copy_success_url']   = HTTP_CATALOG . 'index.php?route=checkout/success';
+        $data['copy_fail_url']  = HTTP_CATALOG . 'index.php?route=checkout/failure';
         $data['tooltip_payment_name'] = $this->language->get('tooltip_payment_name');
         $data['tooltip_merchant_id'] = $this->language->get('tooltip_merchant_id');
         $data['tooltip_secret_word'] = $this->language->get('tooltip_secret_word');
@@ -52,9 +48,24 @@ class ControllerExtensionPaymentPaybox extends Controller {
         $data['entry_geo_zone'] = $this->language->get('entry_geo_zone');
         $data['entry_status'] = $this->language->get('entry_status');
         $data['entry_sort_order'] = $this->language->get('entry_sort_order');
+        $data['entity_ofd_tax_type'] = $this->language->get('entity_ofd_tax_type');
         $data['button_save'] = $this->language->get('button_save');
         $data['button_cancel'] = $this->language->get('button_cancel');
         $data['tab_general'] = $this->language->get('tab_general');
+        $data['tooltip_ofd_tax_type'] = $this->language->get('tooltip_ofd_tax_type');
+        $data['tooltip_ofd_shipping'] = $this->language->get('tooltip_ofd_shipping');
+        $data['entity_ofd_shipping'] = $this->language->get('entity_ofd_shipping');
+        //
+        $data['tax_type_vat_none'] = $this->language->get('tax_type_vat_none');
+        $data['tax_type_vat_0'] = $this->language->get('tax_type_vat_0');
+        $data['tax_type_vat_12'] = $this->language->get('tax_type_vat_12');
+        $data['tax_type_vat_112'] = $this->language->get('tax_type_vat_112');
+        $data['tax_type_vat_18'] = $this->language->get('tax_type_vat_18');
+        $data['tax_type_vat_118'] = $this->language->get('tax_type_vat_118');
+        $data['tax_type_vat_10'] = $this->language->get('tax_type_vat_10');
+        $data['tax_type_vat_110'] = $this->language->get('tax_type_vat_110');
+        $data['tax_type_vat_20'] = $this->language->get('tax_type_vat_20');
+        $data['tax_type_vat_120'] = $this->language->get('tax_type_vat_120');
 
         //
         if (isset($this->error['warning'])) {
@@ -108,43 +119,43 @@ class ControllerExtensionPaymentPaybox extends Controller {
         $data['cancel'] = $this->url->link('extension/payment', 'user_token=' . $this->session->data['user_token'], 'SSL');
 
         //
-        if (isset($this->request->post['paybox_payment_name'])) {
-            $data['paybox_payment_name'] = $this->request->post['paybox_payment_name'];
+        if (isset($this->request->post['payment_paybox_payment_name'])) {
+            $data['payment_paybox_payment_name'] = $this->request->post['payment_paybox_payment_name'];
         } else {
-            $data['paybox_payment_name'] = $this->config->get('paybox_payment_name');
+            $data['payment_paybox_payment_name'] = $this->config->get('payment_paybox_payment_name');
         }
 
         //
-        if (isset($this->request->post['paybox_merchant_id'])) {
-            $data['paybox_merchant_id'] = $this->request->post['paybox_merchant_id'];
+        if (isset($this->request->post['payment_paybox_merchant_id'])) {
+            $data['payment_paybox_merchant_id'] = $this->request->post['payment_paybox_merchant_id'];
         } else {
-            $data['paybox_merchant_id'] = $this->config->get('paybox_merchant_id');
+            $data['payment_paybox_merchant_id'] = $this->config->get('payment_paybox_merchant_id');
         }
 
 
         //
-        if (isset($this->request->post['paybox_secret_word'])) {
-            $data['paybox_secret_word'] = $this->request->post['paybox_secret_word'];
+        if (isset($this->request->post['payment_paybox_secret_word'])) {
+            $data['payment_paybox_secret_word'] = $this->request->post['payment_paybox_secret_word'];
         } else {
-            $data['paybox_secret_word'] = $this->config->get('paybox_secret_word');
+            $data['payment_paybox_secret_word'] = $this->config->get('payment_paybox_secret_word');
         }
 
-        if (isset($this->request->post['paybox_test'])) {
-            $data['paybox_test'] = $this->request->post['paybox_test'];
+        if (isset($this->request->post['payment_paybox_test'])) {
+            $data['payment_paybox_test'] = $this->request->post['payment_paybox_test'];
         } else {
-            $data['paybox_test'] = $this->config->get('paybox_test');
+            $data['payment_paybox_test'] = $this->config->get('payment_paybox_test');
         }
 
         if (isset($this->request->post['paybox_lifetime'])) {
-            $data['paybox_lifetime'] = $this->request->post['paybox_lifetime'];
+            $data['payment_paybox_lifetime'] = $this->request->post['payment_paybox_lifetime'];
         } else {
-            $data['paybox_lifetime'] = $this->config->get('paybox_lifetime');
+            $data['payment_paybox_lifetime'] = $this->config->get('payment_paybox_lifetime');
         }
 
-        if (isset($this->request->post['paybox_order_status_id'])) {
-            $data['paybox_order_status_id'] = $this->request->post['paybox_order_status_id'];
+        if (isset($this->request->post['payment_paybox_order_status_id'])) {
+            $data['payment_paybox_order_status_id'] = $this->request->post['payment_paybox_order_status_id'];
         } else {
-            $data['paybox_order_status_id'] = $this->config->get('paybox_order_status_id');
+            $data['payment_paybox_order_status_id'] = $this->config->get('payment_paybox_order_status_id');
         }
 
         if (isset($this->request->post['payment_paybox_ofd'])) {
@@ -153,14 +164,26 @@ class ControllerExtensionPaymentPaybox extends Controller {
             $data['payment_paybox_ofd'] = $this->config->get('payment_paybox_ofd');
         }
 
+        if (isset($this->request->post['payment_paybox_ofd_tax_type'])) {
+            $data['payment_paybox_ofd_tax_type'] = $this->request->post['payment_paybox_ofd_tax_type'];
+        } else {
+            $data['payment_paybox_ofd_tax_type'] = $this->config->get('payment_paybox_ofd_tax_type');
+        }
+
+        if (isset($this->request->post['payment_paybox_ofd_shipping'])) {
+            $data['payment_paybox_ofd_shipping'] = $this->request->post['payment_paybox_ofd_shipping'];
+        } else {
+            $data['payment_paybox_ofd_shipping'] = $this->config->get('payment_paybox_ofd_shipping');
+        }
+
         $this->load->model('localisation/order_status');
 
         $data['order_statuses'] = $this->model_localisation_order_status->getOrderStatuses();
 
-        if (isset($this->request->post['paybox_geo_zone_id'])) {
-            $data['paybox_geo_zone_id'] = $this->request->post['paybox_geo_zone_id'];
+        if (isset($this->request->post['payment_paybox_geo_zone_id'])) {
+            $data['payment_paybox_geo_zone_id'] = $this->request->post['payment_paybox_geo_zone_id'];
         } else {
-            $data['paybox_geo_zone_id'] = $this->config->get('paybox_geo_zone_id');
+            $data['payment_paybox_geo_zone_id'] = $this->config->get('payment_paybox_geo_zone_id');
         }
 
         $this->load->model('localisation/geo_zone');
@@ -173,10 +196,10 @@ class ControllerExtensionPaymentPaybox extends Controller {
             $data['payment_paybox_status'] = $this->config->get('payment_paybox_status');
         }
 
-        if (isset($this->request->post['paybox_sort_order'])) {
-            $data['paybox_sort_order'] = $this->request->post['paybox_sort_order'];
+        if (isset($this->request->post['payment_paybox_sort_order'])) {
+            $data['payment_paybox_sort_order'] = $this->request->post['payment_paybox_sort_order'];
         } else {
-            $data['paybox_sort_order'] = $this->config->get('paybox_sort_order');
+            $data['payment_paybox_sort_order'] = $this->config->get('payment_paybox_sort_order');
         }
 
         $this->template = 'extension/payment/paybox';
@@ -196,21 +219,18 @@ class ControllerExtensionPaymentPaybox extends Controller {
             $this->error['warning'] = $this->language->get('error_permission');
         }
 
-        if (!$this->request->post['paybox_payment_name']) {
+        if (!$this->request->post['payment_paybox_payment_name']) {
             $this->error['payment_name'] = $this->language->get('error_payment_name');
         }
 
-        if (!$this->request->post['paybox_merchant_id']) {
+        if (!$this->request->post['payment_paybox_merchant_id']) {
             $this->error['merchant_id'] = $this->language->get('error_merchant_id');
         }
 
-        if (!$this->request->post['paybox_secret_word']) {
+        if (!$this->request->post['payment_paybox_secret_word']) {
             $this->error['secret_word'] = $this->language->get('error_secret_word');
         }
 
-        if (!$this->request->post['paybox_order_status_id']) {
-            $this->error['paybox_order_status_id'] = $this->language->get('error_order_status_id');
-        }
         if (!$this->error) {
             return TRUE;
         } else {

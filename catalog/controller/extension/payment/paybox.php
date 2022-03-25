@@ -10,10 +10,15 @@ class ControllerExtensionPaymentPaybox extends Controller {
         $order_products = $this->model_account_order->getOrderProducts($this->session->data['order_id']);
         $order_products['total'] = 0;
 
+
         $strOrderDescription = "";
         foreach($order_products as $product) {
-            $strOrderDescription .= @$product["name"]." ".@$product["model"]."*".@$product["quantity"].";";
+            $strOrderDescription .= @$product["name"]."*".@$product["quantity"]."; ";
             $order_products['total'] += $product['total'];
+        }
+
+        if ($this->config->get('payment_paybox_ofd_shipping')) {
+            $order_products['total'] += floatval($this->session->data['shipping_method']['cost']);
         }
 
         $data['button_confirm'] = $this->language->get('button_confirm');
@@ -38,7 +43,7 @@ class ControllerExtensionPaymentPaybox extends Controller {
         $arrReq = array(
             'pg_amount'         => (int)$order_products['total'],
             'pg_check_url'      => HTTPS_SERVER . 'index.php?route=extension/payment/paybox/check',
-            'pg_description'    => $strOrderDescription,
+            'pg_description'    => substr($strOrderDescription, 0, -5),
             'pg_encoding'       => 'UTF-8',
             'pg_currency'       => $strCurrency,
             'pg_user_ip'        => $_SERVER['REMOTE_ADDR'],
@@ -64,7 +69,16 @@ class ControllerExtensionPaymentPaybox extends Controller {
                     'count' => $value['quantity'],
                     'name' => $value['name'],
                     'price' => $value['price'],
-                    'tax_type' => $value['tax']
+                    'tax_type' => $this->config->get('payment_paybox_ofd_tax_type')
+                ];
+            }
+
+            if ($this->config->get('payment_paybox_ofd_shipping')) {
+                $arrReq['pg_receipt_positions'][] = [
+                    'count' => 1,
+                    'name' => $this->session->data['shipping_method']['title'],
+                    'price' => $this->session->data['shipping_method']['cost'],
+                    'tax_type' => $this->config->get('payment_paybox_ofd_tax_type')
                 ];
             }
         }
