@@ -67,5 +67,18 @@ class ModelExtensionPaymentPaybox extends Model {
         return $arrFlatParams;
     }
 
+    public function getPositionsProductToOfd($productPrice, $type, $data, $count = null) {
+        switch ($type) {
+            case 'coupon':
+                if ('P' === $data['type']) {
+                    return (string)($productPrice - $productPrice/100*(int)$data['discount']);
+                } else {
+                    return (string)($productPrice - $data['discount']/$count);
+                }
+            case 'voucher':
+                return (string)($productPrice - $data['amount']/$count);
+            default:
+                return null;
+        }
+    }
 }
-?>

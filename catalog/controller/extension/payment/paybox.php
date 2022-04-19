@@ -2,23 +2,23 @@
 class ControllerExtensionPaymentPaybox extends Controller {
 
     public function index() {
-
         $this->language->load('extension/payment/paybox');
         $this->load->model('checkout/order');
-        $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
         $this->load->model('account/order');
+        $this->load->model('extension/total/coupon');
+        $this->load->model('extension/total/voucher');
+        $this->load->model('extension/payment/paybox');
+
+        $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
         $order_products = $this->model_account_order->getOrderProducts($this->session->data['order_id']);
-        $order_products['total'] = 0;
 
         $strOrderDescription = "";
         foreach($order_products as $product) {
-            $strOrderDescription .= @$product["name"]." ".@$product["model"]."*".@$product["quantity"].";";
-            $order_products['total'] += $product['total'];
+            $strOrderDescription .= @$product["name"]."*".@$product["quantity"]."; ";
         }
 
         $data['button_confirm'] = $this->language->get('button_confirm');
         $data['button_back'] = $this->language->get('button_back');
-
 
         // Настройки
 
@@ -31,14 +31,15 @@ class ControllerExtensionPaymentPaybox extends Controller {
         $this->load->model('extension/payment/paybox');
 
         $strCurrency = $order_info['currency_code'];
-        if($strCurrency == "RUR") {
+
+        if ($strCurrency == "RUR") {
             $strCurrency = "RUB";
         }
 
         $arrReq = array(
-            'pg_amount'         => (int)$order_products['total'],
+            'pg_amount'         => (int)$order_info['total'],
             'pg_check_url'      => HTTPS_SERVER . 'index.php?route=extension/payment/paybox/check',
-            'pg_description'    => $strOrderDescription,
+            'pg_description'    => substr($strOrderDescription, 0, -5),
             'pg_encoding'       => 'UTF-8',
             'pg_currency'       => $strCurrency,
             'pg_user_ip'        => $_SERVER['REMOTE_ADDR'],
@@ -58,13 +59,40 @@ class ControllerExtensionPaymentPaybox extends Controller {
             $arrReq['pg_testing_mode'] = 1;
         }
 
+        if ($this->session->data['coupon']) {
+            $coupon = $this->model_extension_total_coupon->getCoupon($this->session->data['coupon']);
+        }
+
+        if ($this->session->data['voucher']) {
+            $voucher = $this->model_extension_total_voucher->getVoucher($this->session->data['voucher']);
+        }
+
         if ($this->config->get('payment_paybox_ofd') == 1) {
             foreach ($this->model_account_order->getOrderProducts($this->session->data['order_id']) as $key => $value) {
+                $count = count($this->model_account_order->getOrderProducts($this->session->data['order_id']));
+
+                if ($coupon) {
+                    $price = $this->model_extension_payment_paybox->getPositionsProductToOfd($value['total'], 'coupon', $coupon, $count);
+                } elseif ($voucher) {
+                    $price = $this->model_extension_payment_paybox->getPositionsProductToOfd($value['total'], 'voucher', $voucher, $count);
+                } else {
+                    $price = $value['total'];
+                }
+
                 $arrReq['pg_receipt_positions'][] = [
                     'count' => $value['quantity'],
                     'name' => $value['name'],
-                    'price' => $value['price'],
-                    'tax_type' => $value['tax']
+                    'price' => $price,
+                    'tax_type' => $this->config->get('payment_paybox_ofd_tax_type')
+                ];
+            }
+
+            if ($this->config->get('payment_paybox_ofd_shipping')) {
+                $arrReq['pg_receipt_positions'][] = [
+                    'count' => 1,
+                    'name' => $this->session->data['shipping_method']['title'],
+                    'price' => $this->session->data['shipping_method']['cost'],
+                    'tax_type' => $this->config->get('payment_paybox_ofd_tax_type')
                 ];
             }
         }
