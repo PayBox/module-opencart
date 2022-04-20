@@ -88,10 +88,16 @@ class ControllerExtensionPaymentPaybox extends Controller {
             }
 
             if ($this->config->get('payment_paybox_ofd_shipping')) {
+                if ($coupon && $coupon['shipping'] == '1') {
+                    $price = 0;
+                } else {
+                    $price = $this->session->data['shipping_method']['cost'];
+                }
+
                 $arrReq['pg_receipt_positions'][] = [
                     'count' => 1,
                     'name' => $this->session->data['shipping_method']['title'],
-                    'price' => $this->session->data['shipping_method']['cost'],
+                    'price' => $price,
                     'tax_type' => $this->config->get('payment_paybox_ofd_tax_type')
                 ];
             }
