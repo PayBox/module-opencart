@@ -21,9 +21,9 @@ class ModelExtensionPaymentPaybox extends Model {
 
         if ($status) {
             $method_data = array(
-                'code'         => 'paybox',
+                'code'       => 'paybox',
                 'title'      => !$this->config->get('payment_paybox_payment_name') ? $this->language->get('text_title') : $this->config->get('payment_paybox_payment_name'),
-                'terms' => '',
+                'terms'      => '',
                 'sort_order' => $this->config->get('payment_paybox_sort_order')
             );
         }
@@ -80,5 +80,20 @@ class ModelExtensionPaymentPaybox extends Model {
             default:
                 return null;
         }
+    }
+
+    public function descriptionFieldFormatting($str)
+    {
+        $str = substr(trim($str), 0, 1024); // API PayBox поле pg_description принимает не более 1024 символов
+        $pattern = [
+            '/[^',                             // Начало регулярного выражения
+            'A-zА-я0-9\,\-\!\*\#\'\"\s\+\;',   // Базовый набор допустимых символов
+            'ёЁЇїІіЄєҐґ',                      // Символы алфавита Украины
+            'ӘәҒғҚқҢңӨөҰұҮүҺһІі',              // Символы алфавита Казахстана
+            'ҢңӨөҮү',                          // Символы алфавита Кыргызстана
+            ']/'                               // Конец регулярного выражения
+        ];
+
+        return preg_replace(implode('', $pattern), '', $str); // Удаляем все символы, что не соответствуют шаблону
     }
 }

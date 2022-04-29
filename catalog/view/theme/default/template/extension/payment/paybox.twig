@@ -1,6 +1,10 @@
-<form action="{{ action }}"" accept-charset="utf-8" method="post" id="payment">
-
+<form action="{{ action }}" accept-charset="utf-8" method="post" id="payment">
+    {% for key, value in arrReq %}
+        <input name="{{ key }}" value="{{ value }}" type="hidden" autocomplete="off">
+    {% endfor %}
 </form>
-  <div class="buttons">
-    <div class="pull-right"><input onclick="$('#payment').submit();" type="submit" value="{{ button_confirm }}" class="btn btn-primary" /></div>
-  </div>
+<div class="buttons">
+    <div class="pull-right">
+      <input onclick="$('#payment').submit();" type="submit" value="{{ button_confirm }}" class="btn btn-primary"/>
+    </div>
+</div>
