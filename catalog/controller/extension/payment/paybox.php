@@ -39,7 +39,7 @@ class ControllerExtensionPaymentPaybox extends Controller {
         $arrReq = array(
             'pg_amount'         => (int)$order_info['total'],
             'pg_check_url'      => HTTPS_SERVER . 'index.php?route=extension/payment/paybox/check',
-            'pg_description'    => substr($strOrderDescription, 0, -5),
+            'pg_description'    => $this->model_extension_payment_paybox->descriptionFieldFormatting($strOrderDescription),
             'pg_encoding'       => 'UTF-8',
             'pg_currency'       => $strCurrency,
             'pg_user_ip'        => $_SERVER['REMOTE_ADDR'],
@@ -47,7 +47,7 @@ class ControllerExtensionPaymentPaybox extends Controller {
             'pg_merchant_id'    => $merchant_id,
             'pg_order_id'       => $order_info['order_id'],
             'pg_result_url'     => HTTPS_SERVER . 'index.php?route=extension/payment/paybox/callback',
-            'pg_request_method' => 'GET',
+            'pg_request_method' => 'POST',
             'pg_salt'           => rand(21, 43433),
             'pg_success_url'    => HTTPS_SERVER . 'index.php?route=checkout/success',
             'pg_failure_url'    => HTTPS_SERVER . 'index.php?route=checkout/failure',
@@ -59,11 +59,11 @@ class ControllerExtensionPaymentPaybox extends Controller {
             $arrReq['pg_testing_mode'] = 1;
         }
 
-        if ($this->session->data['coupon']) {
+        if (isset($this->session->data['coupon'])) {
             $coupon = $this->model_extension_total_coupon->getCoupon($this->session->data['coupon']);
         }
 
-        if ($this->session->data['voucher']) {
+        if (isset($this->session->data['voucher'])) {
             $voucher = $this->model_extension_total_voucher->getVoucher($this->session->data['voucher']);
         }
 
@@ -104,9 +104,9 @@ class ControllerExtensionPaymentPaybox extends Controller {
         }
 
         $arrReq['pg_sig'] = $this->model_extension_payment_paybox->make('payment.php', $arrReq, $secret_word);
-        $query = http_build_query($arrReq);
 
-        $data['action'] = 'https://api.paybox.money/payment.php?' . $query;
+        $data['arrReq'] = $arrReq;
+        $data['action'] = 'https://api.paybox.money/payment.php';
 
         if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/extension/payment/paybox')) {
             return $this->load->view($this->config->get('config_template') . '/extension/payment/paybox', $data);
