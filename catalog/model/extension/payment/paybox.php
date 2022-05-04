@@ -82,7 +82,7 @@ class ModelExtensionPaymentPaybox extends Model {
         }
     }
 
-    public function descriptionFieldFormatting($str)
+    public function stringFieldFormatting($str)
     {
         $str = substr(trim($str), 0, 1024); // API PayBox поле pg_description принимает не более 1024 символов
         $pattern = [
@@ -91,7 +91,7 @@ class ModelExtensionPaymentPaybox extends Model {
             'ёЁЇїІіЄєҐґ',                      // Символы алфавита Украины
             'ӘәҒғҚқҢңӨөҰұҮүҺһІі',              // Символы алфавита Казахстана
             'ҢңӨөҮү',                          // Символы алфавита Кыргызстана
-            ']/'                               // Конец регулярного выражения
+            ']/u'                              // Конец регулярного выражения
         ];
 
         return preg_replace(implode('', $pattern), '', $str); // Удаляем все символы, что не соответствуют шаблону

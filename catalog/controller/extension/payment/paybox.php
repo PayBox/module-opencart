@@ -39,7 +39,7 @@ class ControllerExtensionPaymentPaybox extends Controller {
         $arrReq = array(
             'pg_amount'         => (int)$order_info['total'],
             'pg_check_url'      => HTTPS_SERVER . 'index.php?route=extension/payment/paybox/check',
-            'pg_description'    => $this->model_extension_payment_paybox->descriptionFieldFormatting($strOrderDescription),
+            'pg_description'    => $this->model_extension_payment_paybox->stringFieldFormatting($strOrderDescription),
             'pg_encoding'       => 'UTF-8',
             'pg_currency'       => $strCurrency,
             'pg_user_ip'        => $_SERVER['REMOTE_ADDR'],
@@ -71,9 +71,9 @@ class ControllerExtensionPaymentPaybox extends Controller {
             foreach ($this->model_account_order->getOrderProducts($this->session->data['order_id']) as $key => $value) {
                 $count = count($this->model_account_order->getOrderProducts($this->session->data['order_id']));
 
-                if ($coupon) {
+                if (isset($coupon)) {
                     $price = $this->model_extension_payment_paybox->getPositionsProductToOfd($value['total'], 'coupon', $coupon, $count);
-                } elseif ($voucher) {
+                } elseif (isset($voucher)) {
                     $price = $this->model_extension_payment_paybox->getPositionsProductToOfd($value['total'], 'voucher', $voucher, $count);
                 } else {
                     $price = $value['total'];
@@ -81,14 +81,14 @@ class ControllerExtensionPaymentPaybox extends Controller {
 
                 $arrReq['pg_receipt_positions'][] = [
                     'count' => $value['quantity'],
-                    'name' => $value['name'],
+                    'name' => $this->model_extension_payment_paybox->stringFieldFormatting($value['name']),
                     'price' => $price,
                     'tax_type' => $this->config->get('payment_paybox_ofd_tax_type')
                 ];
             }
 
             if ($this->config->get('payment_paybox_ofd_shipping')) {
-                if ($coupon && $coupon['shipping'] == '1') {
+                if (isset($coupon) && $coupon['shipping'] == '1') {
                     $price = 0;
                 } else {
                     $price = $this->session->data['shipping_method']['cost'];
@@ -96,7 +96,7 @@ class ControllerExtensionPaymentPaybox extends Controller {
 
                 $arrReq['pg_receipt_positions'][] = [
                     'count' => 1,
-                    'name' => $this->session->data['shipping_method']['title'],
+                    'name' => $this->model_extension_payment_paybox->stringFieldFormatting($this->session->data['shipping_method']['title']),
                     'price' => $price,
                     'tax_type' => $this->config->get('payment_paybox_ofd_tax_type')
                 ];

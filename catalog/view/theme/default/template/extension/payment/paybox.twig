@@ -1,6 +1,15 @@
 <form action="{{ action }}" accept-charset="utf-8" method="post" id="payment">
-    {% for key, value in arrReq %}
-        <input name="{{ key }}" value="{{ value }}" type="hidden" autocomplete="off">
+    {% for param_key, param_value in arrReq %}
+        {% if (param_value is iterable) %}
+            {% for receipt_position_key, receipt_position_value in param_value %}
+                <input name="{{ param_key }}[{{ receipt_position_key }}][count]" value="{{ receipt_position_value['count'] }}" type="hidden" autocomplete="off">
+                <input name="{{ param_key }}[{{ receipt_position_key }}][name]" value="{{ receipt_position_value['name'] }}" type="hidden" autocomplete="off">
+                <input name="{{ param_key }}[{{ receipt_position_key }}][price]" value="{{ receipt_position_value['price'] }}" type="hidden" autocomplete="off">
+                <input name="{{ param_key }}[{{ receipt_position_key }}][tax_type]" value="{{ receipt_position_value['tax_type'] }}" type="hidden" autocomplete="off">
+            {% endfor %}
+        {% else %}
+            <input name="{{ param_key }}" value="{{ param_value }}" type="hidden" autocomplete="off">
+        {% endif %}
     {% endfor %}
 </form>
 <div class="buttons">
