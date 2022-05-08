@@ -47,7 +47,7 @@ class ControllerExtensionPaymentPaybox extends Controller {
             'pg_merchant_id'    => $merchant_id,
             'pg_order_id'       => $order_info['order_id'],
             'pg_result_url'     => HTTPS_SERVER . 'index.php?route=extension/payment/paybox/callback',
-            'pg_request_method' => 'POST',
+            'pg_request_method' => 'GET',
             'pg_salt'           => rand(21, 43433),
             'pg_success_url'    => HTTPS_SERVER . 'index.php?route=checkout/success',
             'pg_failure_url'    => HTTPS_SERVER . 'index.php?route=checkout/failure',
