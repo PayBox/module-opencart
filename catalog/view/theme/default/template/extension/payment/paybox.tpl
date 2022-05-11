@@ -2,5 +2,5 @@
 
 </form>
   <div class="buttons">
-    <div class="pull-right"><input onclick="$('#payment').submit();" type="submit" value="<?php echo $button_confirm; ?>" class="btn btn-primary" /></div>
+    <div class="pull-right"><input onclick="document.getElementById('payment').submit();" type="submit" value="<?php echo $button_confirm; ?>" class="btn btn-primary" /></div>
   </div>
