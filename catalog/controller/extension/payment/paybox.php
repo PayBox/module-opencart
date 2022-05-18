@@ -72,11 +72,11 @@ class ControllerExtensionPaymentPaybox extends Controller {
                 $count = count($this->model_account_order->getOrderProducts($this->session->data['order_id']));
 
                 if (isset($coupon)) {
-                    $price = $this->model_extension_payment_paybox->getPositionsProductToOfd($value['total'], 'coupon', $coupon, $count);
+                    $price = $this->model_extension_payment_paybox->getPositionsProductToOfd($value['price'], 'coupon', $coupon, $count);
                 } elseif (isset($voucher)) {
-                    $price = $this->model_extension_payment_paybox->getPositionsProductToOfd($value['total'], 'voucher', $voucher, $count);
+                    $price = $this->model_extension_payment_paybox->getPositionsProductToOfd($value['price'], 'voucher', $voucher, $count);
                 } else {
-                    $price = $value['total'];
+                    $price = $value['price'];
                 }
 
                 $arrReq['pg_receipt_positions'][] = [
