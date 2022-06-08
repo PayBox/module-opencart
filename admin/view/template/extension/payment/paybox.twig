@@ -147,7 +147,7 @@
                             <span data-toggle="tooltip" title="{{ tooltip_ofd_tax_type }}">{{ entity_ofd_tax_type }}</span>
                         </label>
                         <div class="col-sm-2">
-                            <select name="payment_paybox_ofd_tax_type" id="payment_paybox_ofd_tax_type" class="form-control">
+                            <select name="payment_paybox_ofd_tax_type" id="payment_paybox_ofd_tax_type" class="form-control" {{ (payment_paybox_ofd == 1) ? '' : 'disabled' }}>
                                 <option value="0" {{ (payment_paybox_ofd_tax_type == 0)  ? 'selected' : '' }}>{{ tax_type_vat_none }}</option>
                                 <option value="1" {{ (payment_paybox_ofd_tax_type == 1)  ? 'selected' : '' }}>{{ tax_type_vat_0 }}</option>
                                 <option value="2" {{ (payment_paybox_ofd_tax_type == 2)  ? 'selected' : '' }}>{{ tax_type_vat_12 }}</option>
@@ -164,7 +164,7 @@
                             <span data-toggle="tooltip" title="{{ tooltip_ofd_shipping }}">{{ entity_ofd_shipping }}</span>
                         </label>
                         <div class="col-sm-2">
-                            <select name="payment_paybox_ofd_shipping" id="payment_paybox_ofd_shipping" class="form-control">
+                            <select name="payment_paybox_ofd_shipping" id="payment_paybox_ofd_shipping" class="form-control" {{ (payment_paybox_ofd == 1) ? '' : 'disabled' }}>
                                 <option value="1" {{ (payment_paybox_ofd_shipping == 1) ? 'selected' : '' }}>{{ text_enabled }}</option>
                                 <option value="0" {{ (payment_paybox_ofd_shipping == 0) ? 'selected' : '' }}>{{ text_disabled }}</option>
                             </select>
