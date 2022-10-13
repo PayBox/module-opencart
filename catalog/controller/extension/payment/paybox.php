@@ -55,7 +55,7 @@ class ControllerExtensionPaymentPaybox extends Controller
             'pg_salt'               => rand(21, 43433),
             'pg_success_url'        => HTTPS_SERVER . 'index.php?route=checkout/success',
             'pg_failure_url'        => HTTPS_SERVER . 'index.php?route=checkout/failure',
-            'pg_user_phone'         => $order_info['telephone'],
+            'pg_user_phone'         => (int)preg_replace('/\D/', '', $order_info['telephone']),
             'pg_user_contact_email' => $order_info['email']
         );
 
