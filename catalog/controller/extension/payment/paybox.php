@@ -28,8 +28,6 @@ class ControllerExtensionPaymentPaybox extends Controller
         $secret_word = $this->config->get('payment_paybox_secret_word');
         $lifetime = $this->config->get('payment_paybox_lifetime');
 
-        $msg_description = $this->language->get('msg_description');
-
         $this->load->model('extension/payment/paybox');
 
         $strCurrency = $order_info['currency_code'];
@@ -38,9 +36,11 @@ class ControllerExtensionPaymentPaybox extends Controller
             $strCurrency = 'RUB';
         }
 
+        $baseUrl = explode('index.php', $this->request->server['HTTP_REFERER'])[0];
+
         $arrReq = array(
-            'pg_amount'             => (int)$order_info['total'],
-            'pg_check_url'          => HTTPS_SERVER . 'index.php?route=extension/payment/paybox/check',
+            'pg_amount'             => $order_info['total'],
+            'pg_check_url'          => $baseUrl . 'index.php?route=extension/payment/paybox/check',
             'pg_description'        => $this->model_extension_payment_paybox->stringFieldFormatting(
                 $strOrderDescription
             ),
@@ -50,11 +50,11 @@ class ControllerExtensionPaymentPaybox extends Controller
             'pg_lifetime'           => !empty($lifetime) ? $lifetime * 3600 : 86400,
             'pg_merchant_id'        => $merchant_id,
             'pg_order_id'           => $order_info['order_id'],
-            'pg_result_url'         => HTTPS_SERVER . 'index.php?route=extension/payment/paybox/callback',
+            'pg_result_url'         => $baseUrl . 'index.php?route=extension/payment/paybox/callback',
             'pg_request_method'     => 'GET',
             'pg_salt'               => rand(21, 43433),
-            'pg_success_url'        => HTTPS_SERVER . 'index.php?route=checkout/success',
-            'pg_failure_url'        => HTTPS_SERVER . 'index.php?route=checkout/failure',
+            'pg_success_url'        => $baseUrl . 'index.php?route=checkout/success',
+            'pg_failure_url'        => $baseUrl . 'index.php?route=checkout/failure',
             'pg_user_phone'         => (int)preg_replace('/\D/', '', $order_info['telephone']),
             'pg_user_contact_email' => $order_info['email']
         );
