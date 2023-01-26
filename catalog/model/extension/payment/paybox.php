@@ -71,7 +71,7 @@ class ModelExtensionPaymentPaybox extends Model {
         switch ($type) {
             case 'coupon':
                 if ('P' === $data['type']) {
-                    return (string)($productPrice - $productPrice/100*(int)$data['discount']);
+                    return (string)($productPrice - $productPrice/100 * (float)$data['discount']);
                 } else {
                     return (string)($productPrice - $data['discount']/$count);
                 }
